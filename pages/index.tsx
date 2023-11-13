@@ -9,25 +9,18 @@ export default function Home() {
   const supabase = useSupabaseClient();
   useEffect(() => {
     if (session) {
-      // ここでユーザー情報をusersテーブルに保存します
+      // ここでユーザー情報をusersテーブルに保存
       const updateUserInfo = async () => {
         const { user } = session;
-        const { data, error } = await supabase.from("users").upsert(
-          {
-            id: user.id, // これはSupabaseによって自動的に作成されたユーザーIDです
-            email: user.email, // サインイン時に入力されたメールアドレス
-            // nameや他のフィールドを追加する場合はここに追加します
-          },
-          {
-            returning: "minimal", // 応答としてデータが返されないようにする（パフォーマンスの向上）
-          }
-        );
+        const { data, error } = await supabase.from("users").upsert({
+          id: user.id, // これはSupabaseによって自動的に作成されたユーザーID
+          email: user.email, // サインイン時に入力されたメールアドレス
+        });
 
         if (error) {
           console.error("Error updating user info:", error);
         }
       };
-
       updateUserInfo();
     }
   }, [session, supabase]);

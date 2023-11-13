@@ -2,8 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Database } from "@/lib/schema";
 import UserProfile from "./userProfile";
+type UserProfileType = {
+  created_at: string;
+  email: string | null;
+  id: string;
+  name: string | null;
+  password: string | null;
+  points: number | null;
+};
+
 const Profile = () => {
-  const [userProfile, setUserProfile] = useState([]);
+  const [userProfile, setUserProfile] = useState<UserProfileType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditMode, setIsEditMode] = useState(false);
   const [newName, setNewName] = useState(""); // State for the new name
@@ -34,6 +43,12 @@ const Profile = () => {
   };
 
   const handleNameChange = async () => {
+    // userIdがundefinedの場合は処理を中断
+    if (!userId) {
+      console.error("Error: User ID is undefined.");
+      return;
+    }
+
     const { error } = await supabase
       .from("users")
       .update({ name: newName }) // Replace 'name' with the actual field name

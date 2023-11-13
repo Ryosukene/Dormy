@@ -12,10 +12,15 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+type UserInfoType = {
+  userId: string;
+  points: number;
+  name: string;
+};
 
 const CustomBarChart = () => {
-  const [groupIds, setGroupIds] = useState([]);
-  const [userInfo, setUserInfo] = useState([]);
+  const [groupIds, setGroupIds] = useState<(string | null)[]>([]);
+  const [userInfo, setUserInfo] = useState<UserInfoType[]>([]);
   const [chartData, setChartData] = useState({});
   const [loading, setLoading] = useState(true);
   const supabase = useSupabaseClient<Database>();
@@ -34,7 +39,14 @@ const CustomBarChart = () => {
     return data.map((entry) => entry.group_id);
   };
 
-  const fetchUserInfoByGroupId = async (groupId) => {
+  const fetchUserInfoByGroupId = async (groupId: string | null) => {
+    // groupIdがnullの場合は処理を中止
+    if (groupId === null) {
+      console.error("Error: Group ID is null.");
+      return []; // 空の配列を返して処理を中止
+    }
+
+    // groupIdがnullでないと確認された後、クエリを実行
     const { data, error } = await supabase
       .from("group_members")
       .select("user_id, users(*)")
@@ -46,27 +58,22 @@ const CustomBarChart = () => {
     }
     console.log("UserInfo", data);
 
-    return data.map((entry) => ({
-      userId: entry.users.id,
-      points: entry.users.points || 0,
-      name: entry.users.name || entry.users.id.slice(0, 5) + "...",
-    }));
-  };
-  // useEffectを使用して、userInfoの状態の更新時にchartDataも更新する
-  useEffect(() => {
-    setChartData({
-      name: userInfo.map((entry) => entry.name),
-      datasets: [
-        {
-          label: "完了したタスクの数",
-          data: userInfo.map((entry) => entry.points),
-          backgroundColor: "rgba(255, 99, 132, 0.2)",
-          borderColor: "rgba(255, 99, 132, 1)",
-          borderWidth: 1,
-        },
-      ],
+    return data.map((entry) => {
+      if (entry.users === null) {
+        return {
+          userId: entry.user_id || "Unknown",
+          points: 0,
+          name: "Unknown",
+        };
+      }
+
+      return {
+        userId: entry.users.id,
+        points: entry.users.points || 0,
+        name: entry.users.name || entry.users.id.slice(0, 5) + "...",
+      };
     });
-  }, [userInfo]);
+  };
 
   useEffect(() => {
     if (session) {

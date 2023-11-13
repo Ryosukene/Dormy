@@ -29,9 +29,12 @@ export const getUserPointsByGroupId = async (
   // 'data' is an array of objects with 'user_id' and nested 'users' object containing 'points'
   // We need to map it to an array of objects containing 'userId' and 'points'
   const pointsData = data.map((entry) => {
+    const points =
+      entry.users && entry.users.length > 0 ? entry.users[0].points : 0;
+
     return {
       userId: entry.user_id,
-      points: entry.users?.points || 0, // usersがnullでない場合はpointsを、そうでない場合は0を返す
+      points: points,
     };
   });
 

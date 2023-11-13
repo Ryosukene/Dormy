@@ -14,6 +14,7 @@ import {
   useEditableControls,
 } from "@chakra-ui/react";
 import { CheckIcon, CloseIcon, EditIcon } from "@chakra-ui/icons";
+
 import React, { useState, useEffect } from "react";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Database } from "@/lib/schema";
@@ -32,17 +33,30 @@ function CustomControlsExample({ user }: any) {
       getCancelButtonProps,
       getEditButtonProps,
     } = useEditableControls();
-    console.log(user.name);
 
     return isEditing ? (
       <ButtonGroup justifyContent="center" size="sm">
-        <IconButton icon={<CheckIcon />} {...getSubmitButtonProps()} />
-        <IconButton icon={<CloseIcon />} {...getCancelButtonProps()} />
+        <IconButton
+          aria-label="Confirm edit"
+          icon={<CheckIcon />}
+          {...getSubmitButtonProps()}
+        />
+        <IconButton
+          aria-label="Cancel edit"
+          icon={<CloseIcon />}
+          {...getCancelButtonProps()}
+        />
       </ButtonGroup>
     ) : (
-      <IconButton size="sm" icon={<EditIcon />} {...getEditButtonProps()} />
+      <IconButton
+        aria-label="Edit"
+        size="sm"
+        icon={<EditIcon />}
+        {...getEditButtonProps()}
+      />
     );
   }
+
   const handleNameChange = (newName: any) => {
     setNewName(newName); // 編集された名前をステートに保存
   };
@@ -56,8 +70,6 @@ function CustomControlsExample({ user }: any) {
       console.error("Error updating user name:", error);
       return;
     }
-    // setIsEditMode(false);
-    // fetchUserByUserId(userId); // Fetch updated data
   };
   return (
     <Editable
@@ -94,9 +106,6 @@ export default function UserProfile(user: any) {
           <Flex align="center">
             <CustomControlsExample user={user} />
           </Flex>
-          {/* <Text fontWeight="bold" fontSize="xl" textAlign="center">
-            {user.name}
-          </Text> */}
           <Text fontSize="md" color="gray.500" textAlign="center">
             {user.email}
           </Text>

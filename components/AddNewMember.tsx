@@ -16,29 +16,6 @@ import React from "react";
 import { useState } from "react";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Database } from "@/lib/schema";
-{
-  /* <form
-  onSubmit={(e) => {
-    e.preventDefault();
-    addUserToGroup(newMemberId);
-  }}
-  className="flex gap-2 my-2"
->
-  <input
-    className="rounded w-full p-2"
-    type="text"
-    placeholder="Enter the ID of a new member"
-    value={newMemberId}
-    onChange={(e) => {
-      setErrorText("");
-      setNewMemberId(e.target.value);
-    }}
-  />
-  <button className="btn-black" type="submit">
-    Add to the group
-  </button>
-</form>; */
-}
 
 export default function AddNewMemberModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -69,10 +46,13 @@ export default function AddNewMemberModal() {
   };
 
   const addUserToGroup = async (newMemberId: string) => {
-    if (userId === null) {
-      console.error("Error: User ID is null.");
+    // userIdがnullまたはundefinedの場合、処理を中止
+    if (!userId) {
+      console.error("Error: User ID is null or undefined.");
       return;
     }
+
+    // 以降のコードはuserIdが有効な場合のみ実行される
     const groupId = await getGroupIdsByUserId(userId);
     console.log("groupId", groupId[0]);
     console.log("newMemberId", newMemberId);
@@ -90,6 +70,7 @@ export default function AddNewMemberModal() {
       handleSave();
     }
   };
+
   return (
     <>
       <Button onClick={onOpen}>Add New Member</Button>

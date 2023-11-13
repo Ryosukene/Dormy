@@ -9,6 +9,15 @@ import AddNewMemberModal from "./AddNewMember";
 
 // type Todos = Database["public"]["Tables"]["todos"]["Row"];
 type Todos = Database["public"]["Tables"]["todos_group"]["Row"];
+interface UserTableType {
+  created_at: string;
+  email: string | null;
+  id: string;
+  name: string | null;
+  password: string | null;
+  points: number | null;
+}
+
 export default function TodoList({ session }: { session: Session }) {
   const supabase = useSupabaseClient<Database>();
   const [todos, setTodos] = useState<Todos[]>([]);
@@ -17,17 +26,25 @@ export default function TodoList({ session }: { session: Session }) {
   const [newMemberEmail, setNewMemberEmail] = useState("");
   const [newMemberId, setNewMemberId] = useState("");
   const [errorText, setErrorText] = useState("");
-  const [userTable, setUserTable] = useState();
+  const [userTable, setUserTable] = useState<UserTableType | undefined>(
+    undefined
+  );
   const user = session.user;
   const userId = session.user.id;
   useEffect(() => {
     const fetchTodos = async () => {
       const groupId = await getGroupIdsByUserId(user.id);
+      if (groupId === null) {
+        // groupIdがnullの場合は、クエリを実行しないか、エラーハンドリングを行う
+        console.error("Error: Group ID is null.");
+        return;
+      }
+
+      // groupIdがnullでないと確認された後、クエリを実行
       const { data: todos, error } = await supabase
         .from("todos_group")
         .select("*")
-        .eq("group_id", groupId[0])
-        .order("id", { ascending: true });
+        .eq("group_id", groupId);
 
       if (error) {
         console.log("error/useEffect", error);
