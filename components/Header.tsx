@@ -4,6 +4,8 @@ import React from "react";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Database } from "@/lib/schema";
 import { FaHome } from "react-icons/fa";
+import Link from "next/link";
+
 export default function Header() {
   const supabase = useSupabaseClient<Database>();
   const session = useSession();
@@ -16,16 +18,20 @@ export default function Header() {
       bg="gray.900"
       color="white"
     >
-      <a href="/">
+      <Link href="/">
         <IconButton aria-label="Home" icon={<FaHome />} />
-      </a>
+      </Link>
       <Flex>
-        <Box as="a" href="/Profile" marginRight="4" fontWeight="bold">
-          Profile
-        </Box>
-        <Box as="a" href="/BarChart" marginRight="4" fontWeight="bold">
-          Points
-        </Box>
+        <Link href="/Profile">
+          <Box marginRight="4" fontWeight="bold">
+            Profile
+          </Box>
+        </Link>
+        <Link href="/BarChart">
+          <Box marginRight="4" fontWeight="bold">
+            Points
+          </Box>
+        </Link>
         <Box
           cursor="pointer"
           fontWeight="bold"
@@ -40,4 +46,3 @@ export default function Header() {
     </Flex>
   );
 }
-``;
