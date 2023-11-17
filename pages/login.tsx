@@ -136,7 +136,7 @@ export default function LoginPage() {
             </Link>
           </Text>
           <Text mt={4}>
-            Don't have an account?{" "}
+            Don&apos;t have an account?
             <Link color="teal.500" href="/signup">
               Sign up
             </Link>
