@@ -96,10 +96,10 @@ export default function LoginPage() {
             <FormControl>
               <FormLabel>Your email address</FormLabel>
               <InputGroup>
-                <InputLeftElement
-                  pointerEvents="none"
-                  children={<EmailIcon color="gray.300" />}
-                />
+                <InputLeftElement pointerEvents="none">
+                  <EmailIcon color="gray.300" />
+                </InputLeftElement>
+
                 <Input
                   type="email"
                   required
@@ -112,10 +112,10 @@ export default function LoginPage() {
             <FormControl mt={6}>
               <FormLabel>Your password</FormLabel>
               <InputGroup>
-                <InputLeftElement
-                  pointerEvents="none"
-                  children={<LockIcon color="gray.300" />}
-                />
+                <InputLeftElement pointerEvents="none">
+                  <EmailIcon color="gray.300" />
+                </InputLeftElement>
+
                 <Input
                   type="password"
                   required
