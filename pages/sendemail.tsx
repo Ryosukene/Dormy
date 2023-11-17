@@ -12,8 +12,16 @@ import {
   VStack,
   useToast,
 } from "@chakra-ui/react";
-
-export default function SendEmail() {
+export async function getServerSideProps(context: {
+  req: { headers: { host: any } };
+}) {
+  const baseUrl = `https://${context.req.headers.host}`;
+  return { props: { baseUrl } };
+}
+type SendEmailProps = {
+  baseUrl: string;
+};
+export default function SendEmail({ baseUrl }: SendEmailProps) {
   const session = useSession();
   const supabase = useSupabaseClient();
   const toast = useToast();
@@ -25,7 +33,8 @@ export default function SendEmail() {
       const { error: sendEmailError } =
         await supabase.auth.resetPasswordForEmail(email, {
           //   redirectTo: "http://localhost:3000/PasswordReset/",
-          redirectTo: process.env.NEXT_PUBLIC_PASSWORD_RESET_URL,
+          // redirectTo: process.env.NEXT_PUBLIC_PASSWORD_RESET_URL,
+          redirectTo: baseUrl + "/PasswordReset/",
         });
       if (sendEmailError) {
         throw sendEmailError;
