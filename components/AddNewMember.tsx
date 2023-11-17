@@ -87,10 +87,10 @@ export default function AddNewMemberModal() {
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
-              <FormLabel>Group Name</FormLabel>
+              <FormLabel>New Member ID</FormLabel>
               <Input
                 ref={initialRef}
-                placeholder="New Member Name"
+                placeholder="New Member ID"
                 value={newMemberId}
                 onChange={(e) => {
                   setErrorText("");

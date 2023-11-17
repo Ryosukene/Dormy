@@ -5,10 +5,12 @@ import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Database } from "@/lib/schema";
 import { FaHome } from "react-icons/fa";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function Header() {
   const supabase = useSupabaseClient<Database>();
   const session = useSession();
+  const router = useRouter();
   return (
     <Flex
       as="header"
@@ -38,6 +40,9 @@ export default function Header() {
           onClick={async () => {
             const { error } = await supabase.auth.signOut();
             if (error) console.log("Error logging out:", error.message);
+            else {
+              router.push("/");
+            }
           }}
         >
           Logout

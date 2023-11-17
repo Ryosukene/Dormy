@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Database } from "@/lib/schema";
 import UserProfile from "./userProfile";
+import { Center, Text, Button, Stack } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+
 type UserProfileType = {
   created_at: string;
   email: string | null;
@@ -19,7 +22,7 @@ const Profile = () => {
   const supabase = useSupabaseClient<Database>();
   const session = useSession();
   const userId = session?.user?.id;
-
+  const router = useRouter();
   useEffect(() => {
     if (userId) {
       fetchUserByUserId(userId);
@@ -61,7 +64,21 @@ const Profile = () => {
     setIsEditMode(false);
     fetchUserByUserId(userId); // Fetch updated data
   };
-
+  if (!session) {
+    const handleGoHome = () => {
+      router.push("/");
+    };
+    return (
+      <Center height="100vh">
+        <Stack spacing={4}>
+          <Text fontSize="xl">You are not logged in</Text>
+          <Button colorScheme="blue" onClick={handleGoHome}>
+            Return to Home
+          </Button>
+        </Stack>
+      </Center>
+    );
+  }
   return (
     <div>
       {isLoading ? (

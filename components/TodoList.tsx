@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import InitialFocus from "./CreateGroup";
 import CreateGroupModal from "./CreateGroup";
 import AddNewMemberModal from "./AddNewMember";
+import { Checkbox } from "@chakra-ui/react";
 
 // type Todos = Database["public"]["Tables"]["todos"]["Row"];
 type Todos = Database["public"]["Tables"]["todos_group"]["Row"];
@@ -31,6 +32,7 @@ export default function TodoList({ session }: { session: Session }) {
   );
   const user = session.user;
   const userId = session.user.id;
+  const [clicked, setClicked] = useState(true);
   useEffect(() => {
     const fetchTodos = async () => {
       const groupId = await getGroupIdsByUserId(user.id);
@@ -44,7 +46,8 @@ export default function TodoList({ session }: { session: Session }) {
       const { data: todos, error } = await supabase
         .from("todos_group")
         .select("*")
-        .eq("group_id", groupId);
+        .eq("group_id", groupId)
+        .not("is_complete", "eq", true);
 
       if (error) {
         console.log("error/useEffect", error);
@@ -55,8 +58,10 @@ export default function TodoList({ session }: { session: Session }) {
     };
 
     fetchTodos();
-  }, [supabase, user.id]);
-
+  }, [supabase, user.id, clicked]);
+  function toggleClicked() {
+    setClicked(!clicked);
+  }
   const addTodo = async (taskText: string) => {
     // groupIdがUUIDの配列を返すと仮定して、一つのIDを取得する
     const groupIds = await getGroupIdsByUserId(user.id);
@@ -79,7 +84,6 @@ export default function TodoList({ session }: { session: Session }) {
       }
     }
   };
-
   const deleteTodo = async (id: string) => {
     console.log("deleteTodo/id", id);
     try {
@@ -227,6 +231,7 @@ export default function TodoList({ session }: { session: Session }) {
               key={todo.id}
               todo={todo}
               user={user}
+              toggleClicked={toggleClicked}
               onDelete={() => deleteTodo(todo.id)}
             />
           ))}
@@ -243,9 +248,10 @@ export default function TodoList({ session }: { session: Session }) {
 interface TodoProps {
   todo: Todos;
   onDelete: () => void;
+  toggleClicked: () => void;
   user: any; // ここでUser型のuserプロパティを追加
 }
-const Todo: React.FC<TodoProps> = ({ todo, onDelete, user }) => {
+const Todo: React.FC<TodoProps> = ({ todo, toggleClicked, onDelete, user }) => {
   const supabase = useSupabaseClient<Database>();
   const [isCompleted, setIsCompleted] = useState(todo.is_complete);
   const incrementPoint = async () => {
@@ -272,13 +278,28 @@ const Todo: React.FC<TodoProps> = ({ todo, onDelete, user }) => {
       .from("users")
       .update({ points: updatedPoints })
       .eq("id", userId);
+    console.log("increment point user_id,todo", userId, todo.id);
 
     if (updateUserError) {
       console.error("Error updating user points:", updateUserError);
     } else {
       console.log("Updated user points successfully to:", updatedPoints);
     }
+
+    console.log("increment point id");
+    const { error: updateTodoError } = await supabase
+      .from("todos_group")
+      .update({ user_id: userId }) // 単一のUUIDを使用
+      .eq("id", todo.id)
+      .single();
+
+    if (updateTodoError) {
+      console.error("Error updating userid in Todo_group:", updateTodoError);
+    } else {
+      console.log("Updated userid in Todo_group:");
+    }
   };
+
   const decrementPoint = async () => {
     const userId = user.id;
     // 現在のポイントを取得
@@ -308,6 +329,17 @@ const Todo: React.FC<TodoProps> = ({ todo, onDelete, user }) => {
     } else {
       console.log("Updated user points successfully to:", updatedPoints);
     }
+    const { error: updateTodoError } = await supabase
+      .from("todos_group")
+      .update({ user_id: null }) // 単一のUUIDを使用
+      .eq("id", todo.id)
+      .single();
+
+    if (updateTodoError) {
+      console.error("Error updating userid in Todo_group:", updateTodoError);
+    } else {
+      console.log("Updated userid in Todo_group:");
+    }
   };
 
   const toggle = async () => {
@@ -322,9 +354,10 @@ const Todo: React.FC<TodoProps> = ({ todo, onDelete, user }) => {
 
       if (data) setIsCompleted(data.is_complete);
       console.log("Todo/is_complete", isCompleted);
-      // await incrementPoint();
-      if (!isCompleted) await incrementPoint();
-      else await decrementPoint();
+      await incrementPoint();
+      toggleClicked();
+      // if (!isCompleted) await incrementPoint();
+      // else await decrementPoint();
     } catch (error) {
       console.log("error", error);
     }
@@ -339,12 +372,18 @@ const Todo: React.FC<TodoProps> = ({ todo, onDelete, user }) => {
           </div>
         </div>
         <div>
-          <input
+          {/* <input
             className="cursor-pointer"
             onChange={(e) => toggle()}
             type="checkbox"
             checked={isCompleted ? true : false}
-          />
+          /> */}
+          <Checkbox
+            isChecked={isCompleted === true ? true : undefined}
+            onChange={() => toggle()}
+          >
+            Done
+          </Checkbox>
         </div>
         <button
           onClick={(e) => {
@@ -376,6 +415,3 @@ const Alert = ({ text }: { text: string }) => (
     <div className="text-sm leading-5 text-red-700">{text}</div>
   </div>
 );
-function incrementPoint() {
-  throw new Error("Function not implemented.");
-}

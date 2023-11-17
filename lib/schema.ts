@@ -9,21 +9,6 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      countries: {
-        Row: {
-          id: number
-          name: string
-        }
-        Insert: {
-          id?: number
-          name: string
-        }
-        Update: {
-          id?: number
-          name?: string
-        }
-        Relationships: []
-      }
       group_members: {
         Row: {
           created_at: string
@@ -83,95 +68,25 @@ export interface Database {
           avatar_url: string | null
           full_name: string | null
           id: string
-          updated_at: string | null
           username: string | null
-          website: string | null
         }
         Insert: {
           avatar_url?: string | null
           full_name?: string | null
           id: string
-          updated_at?: string | null
           username?: string | null
-          website?: string | null
         }
         Update: {
           avatar_url?: string | null
           full_name?: string | null
           id?: string
-          updated_at?: string | null
           username?: string | null
-          website?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "profiles_id_fkey"
             columns: ["id"]
             isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      todos: {
-        Row: {
-          id: number
-          inserted_at: string
-          is_complete: boolean | null
-          task: string | null
-          user_id: string
-        }
-        Insert: {
-          id?: number
-          inserted_at?: string
-          is_complete?: boolean | null
-          task?: string | null
-          user_id: string
-        }
-        Update: {
-          id?: number
-          inserted_at?: string
-          is_complete?: boolean | null
-          task?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "todos_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      todos_duplicate: {
-        Row: {
-          id: number
-          inserted_at: string
-          is_complete: boolean | null
-          task: string | null
-          user_id: string
-        }
-        Insert: {
-          id?: number
-          inserted_at?: string
-          is_complete?: boolean | null
-          task?: string | null
-          user_id: string
-        }
-        Update: {
-          id?: number
-          inserted_at?: string
-          is_complete?: boolean | null
-          task?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "todos_duplicate_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           }
@@ -184,6 +99,7 @@ export interface Database {
           id: string
           is_complete: boolean | null
           task: string | null
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -191,6 +107,7 @@ export interface Database {
           id?: string
           is_complete?: boolean | null
           task?: string | null
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -198,6 +115,7 @@ export interface Database {
           id?: string
           is_complete?: boolean | null
           task?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -208,30 +126,6 @@ export interface Database {
             referencedColumns: ["id"]
           }
         ]
-      }
-      uers: {
-        Row: {
-          created_at: string
-          email: string | null
-          id: string
-          name: string | null
-          password: string | null
-        }
-        Insert: {
-          created_at?: string
-          email?: string | null
-          id?: string
-          name?: string | null
-          password?: string | null
-        }
-        Update: {
-          created_at?: string
-          email?: string | null
-          id?: string
-          name?: string | null
-          password?: string | null
-        }
-        Relationships: []
       }
       users: {
         Row: {
