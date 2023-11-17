@@ -21,6 +21,7 @@ import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { useToast } from "@chakra-ui/react";
+
 export default function LoginPage() {
   const session = useSession();
   const supabase = useSupabaseClient();
@@ -74,7 +75,7 @@ export default function LoginPage() {
       }
       await router.push("/");
     } catch {
-      alert("Error Occured");
+      alert("Error Occurred");
     }
   };
 
@@ -99,7 +100,6 @@ export default function LoginPage() {
                 <InputLeftElement pointerEvents="none">
                   <EmailIcon color="gray.300" />
                 </InputLeftElement>
-
                 <Input
                   type="email"
                   required
@@ -113,9 +113,8 @@ export default function LoginPage() {
               <FormLabel>Your password</FormLabel>
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
-                  <EmailIcon color="gray.300" />
+                  <LockIcon color="gray.300" />
                 </InputLeftElement>
-
                 <Input
                   type="password"
                   required
