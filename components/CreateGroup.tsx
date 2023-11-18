@@ -56,15 +56,11 @@ export default function CreateGroupModal() {
 
     if (memberError) {
       console.error("Error adding user to group:", memberError);
-      // グループの作成は成功したが、ユーザーをメンバーとして追加するのに失敗した場合、
-      // 作成したグループを削除するなどの処理を追加することも考慮できます。
       return null;
     }
     if (!memberError) {
-      // メンバー追加に成功した場合、モーダルを閉じる
       onClose();
     }
-    // return data[0];
   };
   return (
     <>
@@ -78,14 +74,14 @@ export default function CreateGroupModal() {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Create your account</ModalHeader>
+          <ModalHeader>Create Group</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
-              <FormLabel>Group Name</FormLabel>
+              <FormLabel>Room Name</FormLabel>
               <Input
                 ref={initialRef}
-                placeholder="Group Name"
+                placeholder="Room Name"
                 value={newGroupName}
                 onChange={(e) => {
                   setErrorText("");

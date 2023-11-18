@@ -47,7 +47,8 @@ export default function TodoList({ session }: { session: Session }) {
         .from("todos_group")
         .select("*")
         .eq("group_id", groupId)
-        .not("is_complete", "eq", true);
+        .is("is_complete", null);
+      // .not("is_complete", "eq", true);
 
       if (error) {
         console.log("error/useEffect", error);

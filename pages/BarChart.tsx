@@ -36,6 +36,7 @@ const CustomBarChart = () => {
   const [userInfo, setUserInfo] = useState<UserInfoType[]>([]);
   const [chartData, setChartData] = useState({});
   const [loading, setLoading] = useState(true);
+  const [groupName, setGroupName] = useState("");
   const supabase = useSupabaseClient<Database>();
   const session = useSession();
   const router = useRouter();
@@ -103,6 +104,22 @@ const CustomBarChart = () => {
     if (error) {
       console.error("Error fetching user points by group id:", error);
       return []; // エラー時は空の配列を返す
+    }
+    const { data: groupNameData, error: errorGroupName } = await supabase
+      .from("groups")
+      .select("group_name")
+      .eq("id", groupId);
+
+    if (errorGroupName) {
+      console.error("Error fetching group name by group id:", errorGroupName);
+      return []; // エラー時は空の配列を返す
+    } else {
+      // groupNameDataから最初の要素のgroup_nameプロパティを取得し、nullでないことを確認
+      const groupNameValue =
+        groupNameData.length > 0 && groupNameData[0].group_name
+          ? groupNameData[0].group_name
+          : "";
+      setGroupName(groupNameValue);
     }
 
     const userInfoWithTasks = await Promise.all(
@@ -219,19 +236,33 @@ const CustomBarChart = () => {
   };
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <BarChart
-        data={userInfo}
-        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-        style={{ backgroundColor: "#333" }}
+    <>
+      <div
+        style={{
+          backgroundColor: "#333", // 背景色
+          color: "white", // テキスト色
+          padding: "10px", // パディング
+          boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)", // 影のスタイル
+          textAlign: "center", // テキストの位置
+          fontSize: "20px", // フォントサイズ
+          fontWeight: "bold", // フォントウェイト
+        }}
       >
-        <XAxis dataKey="name" stroke="#ccc" />
-        <YAxis stroke="#ccc" />
-        <Tooltip content={<CustomTooltip />} />
-        <Legend />
-        <Bar dataKey="points" fill="#8884d8" radius={[10, 10, 0, 0]} />
-      </BarChart>
-    </ResponsiveContainer>
+        Room : {groupName}
+      </div>
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          data={userInfo}
+          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          style={{ backgroundColor: "#333" }}
+        >
+          <XAxis dataKey="name" stroke="#ccc" />
+          <Tooltip content={<CustomTooltip />} />
+          <Legend />
+          <Bar dataKey="points" fill="#8884d8" radius={[10, 10, 0, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
+    </>
   );
 };
 
