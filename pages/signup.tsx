@@ -52,7 +52,7 @@ export default function SignUp() {
       }
       toast({
         title: "Registration Successful",
-        description: "Please check your email to complete registration.",
+        description: "Please Click Home Button",
         status: "success",
         duration: 9000,
         isClosable: true,
